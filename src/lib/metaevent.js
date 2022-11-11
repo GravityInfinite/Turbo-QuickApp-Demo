@@ -1,5 +1,5 @@
 import turbo from "../index";
-import { setQuery } from "../utils/tools";
+import { setQuery, getSence, getSourcePackageName } from "../utils/tools";
 
 let mpshow_time = null;
 export const autoTrackCustom = {
@@ -7,10 +7,10 @@ export const autoTrackCustom = {
     if (!turbo?._para?.autoTrack?.appLaunch) {
       return;
     }
-    turbo.track("$MPLaunch", {
+    turbo.track("$AppStart", {
       $is_first_time: turbo._is_first_launch,
-      $url_query: setQuery(option.query),
-      $scene: String(option.scene),
+      $scene: getSence(),
+      $source_package_name: getSourcePackageName(),
     });
   },
   appShow: function (option) {
@@ -35,7 +35,7 @@ export const autoTrackCustom = {
       current_time - mpshow_time > 0 &&
       (current_time - mpshow_time) / 3600000 < 24
     ) {
-      event_duration = (current_time - mpshow_time);
+      event_duration = current_time - mpshow_time;
     }
     turbo.track("$MPHide", {
       $event_duration: event_duration,

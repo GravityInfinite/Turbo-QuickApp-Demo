@@ -1,5 +1,37 @@
 export const eventProperty = {
-  properties: {},
+  properties: {
+    $lib: "QuickApp",
+    $lib_version: "1.0.0",
+  },
+  getOtherAfterNative: async function () {
+    const first_visit_day = await storage.get({
+      key: "first_visit_day",
+    });
+    this.properties.$app_id = app.getInfo().packageName;
+    this.properties.$is_first_day =
+      first_visit_day.data === new Date().toLocaleDateString();
+  },
+  getSystem: function () {
+    var t = this.properties;
+    device.getInfo({
+      success: function (e) {
+        t.$screen_height = Number(e.screenHeight);
+        t.$screen_width = Number(e.screenWidth);
+        t.$model = e.model;
+        t.$manufacturer = e.manufacturer;
+        t.$os = e.osType;
+        t.$os_version = e.osVersionName;
+      },
+    });
+  },
+  getNetwork: function () {
+    var t = this.properties;
+    network.getType({
+      success: function (e) {
+        t.$network_type = e.type;
+      },
+    });
+  },
   getAppInfoSync: function () {
     if (wx.getAccountInfoSync) {
       const info = wx.getAccountInfoSync(),
@@ -16,46 +48,10 @@ export const eventProperty = {
     }
     return {};
   },
-  // getNetworkType非同步，不返回值
-  getNetworkType: function () {
-    const _this = this;
-    wx.getNetworkType({
-      success: function (res) {
-        _this.properties.$network_type = res.networkType;
-      },
-    });
-  },
-  getSystemInfoSync: function () {
-    if (wx.getSystemInfoSync) {
-      const info = wx.getSystemInfoSync();
-      const temp_systeminfo = {
-        $screen_width: info.screenWidth,
-        $screen_height: info.screenHeight,
-        $os_version: info.system,
-        $os: info.platform,
-        $model: info.model,
-        $brand: String(info.brand).toLocaleUpperCase(),
-        $manufacturer: info.brand,
-        $lib_version: "1.0.0",
-      };
-      for (let item in temp_systeminfo) {
-        if (temp_systeminfo.hasOwnProperty(item)) {
-          this.properties[item] = temp_systeminfo[item];
-        }
-      }
-      return temp_systeminfo;
-    }
-    return {};
-  },
-  getRegisterProperties: function (obj = {}) {
-    for (let item in obj) {
-      this.properties[item] = obj[item];
-    }
-  },
-  infoInit: function () {
-    this.getAppInfoSync();
-    this.getNetworkType();
-    this.getSystemInfoSync();
+  infoInit: async function () {
+    await this.getOtherAfterNative();
+    this.getSystem();
+    this.getNetwork();
   },
   getProperties: function () {
     return this.properties;

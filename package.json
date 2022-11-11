@@ -1,14 +1,14 @@
 {
-  "name": "turbo-sdk-minigame",
+  "name": "turbo-sdk-quickapp",
   "version": "3.2.3",
-  "description": "turbo minigame sdk",
+  "description": "turbo quickapp sdk",
   "main": "turbo.min.js",
   "scripts": {
     "build": "webpack --config ./webpack.config.js"
   },
   "keywords": [
     "turbo",
-    "minigame",
+    "quickapp",
     "sdk"
   ],
   "author": "GravityInfinite",
