@@ -1,3 +1,10 @@
+// import storage from "@system.storage";
+// import fetch from "@system.fetch";
+// import device from "@system.device";
+// import network from "@system.network";
+// import router from "@system.router";
+// import app from "@system.app";
+
 import turbo from "../index";
 
 export function isNumber(a) {
@@ -10,33 +17,24 @@ export function isNumber(a) {
     : !1;
 }
 
-/**
- * @name getQuery
- * @return {object} url query
- */
-export function getQuery() {
-  return wx.getLaunchOptionsSync().query || {};
+export function getSence() {
+  const t = app.getInfo();
+  const $scene = t?.source?.type;
+  return $scene;
+}
+export function getSourcePackageName() {
+  const t = app.getInfo();
+  const $source_package_name = t?.source?.packageName;
+  return $source_package_name;
 }
 
-/**
- * @name getPlatForm
- * @return {string} platform name
- */
-export function getPlatForm() {
-  const query = getQuery();
-  if (query.ksUnitId || query.ksCampaignId || query.ksChannel) {
-    return "kuaishou";
-  } else if (
-    query.clue_token ||
-    query.ad_id ||
-    query.creative_id ||
-    query.request_id ||
-    query.advertiser_id
-  ) {
-    return "bytedance";
-  } else {
-    return "";
-  }
+export function getCurrentTitle() {
+  var t = router.getState();
+  return "object" == typeof t ? t.name : "";
+}
+export function getCurrentPath() {
+  var t = router.getState();
+  return "object" == typeof t ? t.path : "";
 }
 
 export function setQuery(obj) {
@@ -72,18 +70,22 @@ export const logger = {
   },
 };
 
-export function getStorageSync(storage_key) {
+export async function getStorageSync(storage_key) {
   let store = "";
   try {
-    store = wx.getStorageSync(storage_key);
+    store = await storage.get({
+      key: storage_key,
+    });
   } catch (e) {
     try {
-      store = wx.getStorageSync(storage_key);
+      store = await storage.get({
+        key: storage_key,
+      });
     } catch (e2) {
       logger.info("getStorage fail");
     }
   }
-  return store;
+  return store.data;
 }
 var ObjProto = Object.prototype;
 var ArrayProto = Array.prototype;

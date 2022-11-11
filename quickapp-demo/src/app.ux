@@ -1,0 +1,28 @@
+<script>
+/**
+ * 应用级别的配置，供所有页面公用
+ */
+
+const $utils = require('./helper/utils').default
+const $apis = require('./helper/apis').default
+import turbo from './helper/turbo.min'
+import storage from "@system.storage";
+
+/* @desc: 注入方法至全局 global,以便页面调用 */
+const hook2global = global.__proto__ || global
+hook2global.$utils = $utils
+hook2global.$apis = $apis
+
+
+export default {
+  async onCreate() {
+    // 如果不用log，可以不调用setPara
+    turbo.setPara({
+      show_log: true
+    })
+    // 如果init后不调用turbo其他内置function，则可以不用async/await
+    await turbo.init('Bvy0s4poRsdMQxmKjaeFS5zr2Dln31Aq', "your_client_id_quick", this);
+    // turbo.otherFunction()
+  }
+}
+</script>

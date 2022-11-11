@@ -1,5 +1,5 @@
 import turbo from "../index";
-import { isNumber, getQuery, getPlatForm } from "../utils/tools";
+import { isNumber } from "../utils/tools";
 import { header } from "./config";
 const baseurl = "https://turbo.api.plutus-cat.com/event_center/api/v1";
 function globalChecked() {
@@ -25,44 +25,25 @@ export const register = function (e = {}) {
   if (!isNumber(e?.version) || typeof e?.version !== "number") {
     throw new Error("version must be type: Number");
   }
-  const platform = getPlatForm();
   const data = {
     client_id: turbo._globalData.client_id,
     name: e.name,
     channel: e.channel,
     version: e.version,
-    media_type: platform || "tencent",
-    wx_openid: e?.wx_openid || "",
-    wx_unionid: e?.wx_unionid || "",
-    click_id: e?.click_id || "",
+    media_type: "quick",
+    wx_openid: "",
+    wx_unionid: "",
+    click_id: "",
     ad_data: {},
   };
-  const query = getQuery();
-  if (platform === "kuaishou") {
-    data.ad_data = {
-      callback: query?.callback || "",
-      ksCampaignId: query?.ksCampaignId || "",
-      ksUnitId: query?.ksUnitId || "",
-      ksCreativeId: query?.ksCreativeId || "",
-      ksChannel: query?.ksChannel || "",
-    };
-  } else if (platform === "bytedance") {
-    data.ad_data = {
-      clue_token: query?.clue_token || "",
-      ad_id: query?.ad_id || "",
-      creative_id: query?.creative_id || "",
-      advertiser_id: query?.advertiser_id || "",
-      request_id: query?.request_id || "",
-    };
-  }
   return new Promise(function (resolve, reject) {
-    wx.request({
+    fetch.fetch({
       url: `${baseurl}/user/register/?access_token=${turbo._globalData.access_token}`,
       method: "POST",
       header,
       data,
       success(res) {
-        if (res.statusCode === 200) {
+        if (res.code === 200) {
           turbo.profileSetOnce({
             $signup_time: new Date()
               .toLocaleString("cn", {
@@ -70,7 +51,7 @@ export const register = function (e = {}) {
               })
               .replaceAll("/", "-"),
           });
-          resolve(res.data);
+          resolve(JSON.parse(res.data));
           return;
         }
         reject(res);
@@ -96,13 +77,13 @@ export const handleEvent = function (e = {}) {
     data.timestamp = e?.timestamp;
   }
   return new Promise(function (resolve, reject) {
-    wx.request({
+    fetch.fetch({
       url: `${baseurl}/event/handle_event/?access_token=${turbo._globalData.access_token}&client_id=${turbo._globalData.client_id}`,
       method: "POST",
       header,
       data,
       success(res) {
-        res.statusCode === 200 ? resolve(res.data) : reject(res);
+        res.code === 200 ? resolve(JSON.parse(res.data)) : reject(res);
       },
       fail(err) {
         reject(err);
@@ -116,15 +97,15 @@ export const queryUser = function () {
     user_list: [turbo._globalData.client_id],
   };
   return new Promise(function (resolve, reject) {
-    wx.request({
+    fetch.fetch({
       url: `${baseurl}/user/get/?access_token=${turbo._globalData.access_token}`,
       method: "POST",
       header,
       data,
-      success(res) {
-        res.statusCode === 200 ? resolve(res.data) : reject(res);
+      success: function (res) {
+        res.code === 200 ? resolve(JSON.parse(res.data)) : reject(res);
       },
-      fail(err) {
+      fail: function (err) {
         reject(err);
       },
     });
