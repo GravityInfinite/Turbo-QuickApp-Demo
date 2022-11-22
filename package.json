@@ -1,6 +1,6 @@
 {
   "name": "turbo-sdk-quickapp",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "turbo quickapp sdk",
   "main": "turbo.min.js",
   "scripts": {

@@ -1,5 +1,5 @@
 import turbo from "../index";
-import { isNumber } from "../utils/tools";
+import { isNumber, dateFormate } from "../utils/tools";
 import { header } from "./config";
 const baseurl = "https://turbo.api.plutus-cat.com/event_center/api/v1";
 function globalChecked() {
@@ -45,11 +45,7 @@ export const register = function (e = {}) {
       success(res) {
         if (res.code === 200) {
           turbo.profileSetOnce({
-            $signup_time: new Date()
-              .toLocaleString("cn", {
-                hour12: false,
-              })
-              .replaceAll("/", "-"),
+            $signup_time: dateFormate(new Date(), true),
           });
           resolve(JSON.parse(res.data));
           return;

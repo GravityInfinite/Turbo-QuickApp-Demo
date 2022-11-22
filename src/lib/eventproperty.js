@@ -1,7 +1,7 @@
 export const eventProperty = {
   properties: {
     $lib: "QuickApp",
-    $lib_version: "1.0.0",
+    $lib_version: "3.2.4",
   },
   getOtherAfterNative: async function () {
     const first_visit_day = await storage.get({
