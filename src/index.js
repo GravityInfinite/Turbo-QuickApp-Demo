@@ -152,12 +152,37 @@ turbo.init = async function (access_token = "", client_id = "", App) {
   turbo._globalData.client_id = client_id;
   await turbo._store.init();
   sendStrategy.init();
-  turbo._autoTrackCustom.appLaunch({
-    $is_first_time: turbo._is_first_launch,
-    $scene: getSence(),
-    $source_package_name: getSourcePackageName(),
+  // turbo._autoTrackCustom.appLaunch({
+  //   $is_first_time: turbo._is_first_launch,
+  //   $scene: getSence(),
+  //   $source_package_name: getSourcePackageName(),
+  // });
+  sendOnce({
+    type: "track",
+    event: "$AppStart",
+    properties: {
+      $is_first_time: turbo._is_first_launch,
+      $scene: getSence(),
+      $source_package_name: getSourcePackageName(),
+    },
+    time: Date.now(),
   });
 };
+
+function sendOnce(data) {
+  if (!turbo._globalData.client_id) {
+    return;
+  }
+  const datas = turbo._store.mem.getMultList([data]) || [];
+  fetch.fetch({
+    url:
+      turbo._para.server_url +
+      `?access_token=${turbo._globalData.access_token}`,
+    method: "POST",
+    header,
+    data: datas[0],
+  });
+}
 
 const sendStrategy = {
   dataHasSend: true,

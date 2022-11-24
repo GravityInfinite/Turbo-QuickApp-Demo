@@ -36,3 +36,6 @@ module.exports = {
     minimize: true,
   },
 };
+
+// 打包后在turbo.min.js前加入：
+// import storage from "@system.storage";import fetch from "@system.fetch";import device from "@system.device";import network from "@system.network";import router from "@system.router";import app from "@system.app";
