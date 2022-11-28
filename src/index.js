@@ -93,14 +93,18 @@ turbo._store = {
     const info = await storage.get({
       key: turbo._para.storage_store_key,
     });
-    if (!info) {
+    if (!info.data) {
       turbo._is_first_launch = true;
       storage.set({
         key: turbo._para.storage_store_key,
         value: true,
       });
+      const commonProps = eventProperty.getProperties();
       turbo.profileSetOnce({
         $first_visit_time: dateFormate(new Date(), true),
+        $os: commonProps.$os,
+        $brand: commonProps.$manufacturer,
+        $model: commonProps.$model,
       });
     }
   },
