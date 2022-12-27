@@ -49,7 +49,7 @@ turbo.init("your_access_token", "your_client_id", this);
 
 #### 2.1 用户注册引力引擎
 
-在用户注册或者可以获取到用户唯一性信息时调用此方法，推荐首次安装启动时调用，后续其他接口，均需要等`register`接口完成之后才能继续调用
+在用户注册或者可以获取到用户唯一性信息时调用此方法，推荐首次安装启动时调用，后续其他接口，均需要等 `register`接口完成之后才能继续调用
 
 ```javascript
 /**
@@ -71,7 +71,7 @@ this.$app.turbo
 
 #### 2.2 买量埋点事件上报
 
-当发生以下买量节点事件时，通过`handleEvent`方法上报事件
+当发生以下买量节点事件时，通过 `handleEvent`方法上报事件
 
 ```javascript
 /**
@@ -82,11 +82,12 @@ this.$app.turbo
     pay                               付费
     twice                             次留
     key_active                        关键行为
-    start                             程序启动 每次启动结束之后都调用一次
  * @param properties          event_type=pay时必填，结构体，包含以下字段
     amount:                           原价金额,单位为分
     real_amount:                      实际付款金额,单位为分
- * @param {number} timestamp  事件发生时间 毫秒时间戳
+ * @param {boolean} use_client_time  是否使用上报的timestamp作为回传时间，默认为false，当为true时，timestamp必填
+ * @param {number} timestamp  事件发生时间，用来回传给广告平台，毫秒时间戳(只有在`use_client_time`为`true`时才需要传入)
+ * @param {string} trace_id   本次事件的唯一id（重复上报会根据该id去重，trace_id的长度不能超过128），可填入订单id，请求id等唯一值。如果为空，turbo则会自动生成一个。
  */
 
 this.$app.turbo
@@ -97,13 +98,15 @@ this.$app.turbo
       real_amount: 180,
     },
     timestamp: 1663227655000,
+    use_client_time: true,
+    trace_id: "your_trace_id",
   })
   .then(() => {});
 ```
 
 #### 2.3 查询用户信息
 
-可以通过调用`queryUser`方法获知当前用户的买量信息
+可以通过调用 `queryUser`方法获知当前用户的买量信息
 
 ```javascript
 /**
@@ -209,7 +212,7 @@ this.$app.turbo.profileAppend({
 
 #### 3.5 用户属性的删除
 
-调用`profileDelete()`方法，将把当前用户属性清空
+调用 `profileDelete()`方法，将把当前用户属性清空
 
 ```javascript
 // // 删除一个用户的整个 Profile

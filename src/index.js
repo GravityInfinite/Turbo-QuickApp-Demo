@@ -156,17 +156,14 @@ turbo.init = async function (access_token = "", client_id = "", App) {
   turbo._globalData.client_id = client_id;
   await turbo._store.init();
   sendStrategy.init();
-  // turbo._autoTrackCustom.appLaunch({
-  //   $is_first_time: turbo._is_first_launch,
-  //   $scene: getSence(),
-  //   $source_package_name: getSourcePackageName(),
-  // });
+  const res = await eventProperty.getNetwork()
   sendOnce({
     type: "track",
     event: "$AppStart",
     properties: {
       $is_first_time: turbo._is_first_launch,
       $scene: getSence(),
+      $network_type: res.type,
       $source_package_name: getSourcePackageName(),
     },
     time: Date.now(),
@@ -219,11 +216,14 @@ const sendStrategy = {
         method: "POST",
         header,
         data: parmas,
-        success: function () {
-          resolve("");
+        success: function (res) {
+          resolve({
+            ...res,
+            count: parmas.event_list.length,
+          });
         },
-        fail: function () {
-          reject("");
+        fail: function (err) {
+          reject(err);
         },
       });
     });
@@ -241,8 +241,14 @@ const sendStrategy = {
       stack.push(this.requestAll(params));
     }
     Promise.all(stack)
-      .then(() => {
-        option.success(option.len);
+      .then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          if (res[i].data.code === 2000) {
+            option.success(0);
+          } else {
+            option.success(res[i].count);
+          }
+        }
       })
       .catch(() => {
         option.fail();
