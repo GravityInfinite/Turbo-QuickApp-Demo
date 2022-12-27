@@ -26,11 +26,15 @@ export const eventProperty = {
   },
   getNetwork: function () {
     var t = this.properties;
-    network.getType({
-      success: function (e) {
-        t.$network_type = e.type;
-      },
-    });
+    return new Promise(function (resolve, reject) {
+      network.getType({
+        success: function (e) {
+          t.$network_type = e.type;
+          resolve(e)
+        },
+      });
+    })
+
   },
   getAppInfoSync: function () {
     if (wx.getAccountInfoSync) {

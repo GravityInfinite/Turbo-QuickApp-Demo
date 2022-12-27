@@ -69,8 +69,15 @@ export const handleEvent = function (e = {}) {
   if (e?.properties) {
     data.properties = e?.properties;
   }
+  data.use_client_time = e?.use_client_time || false;
+  if (data.use_client_time && !e?.timestamp) {
+    throw new Error("timestamp must be required");
+  }
   if (e?.timestamp) {
-    data.timestamp = e?.timestamp;
+    data.timestamp = e.timestamp;
+  }
+  if (e?.trace_id) {
+    data.trace_id = e.trace_id;
   }
   return new Promise(function (resolve, reject) {
     fetch.fetch({
