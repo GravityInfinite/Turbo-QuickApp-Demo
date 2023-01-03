@@ -1,7 +1,7 @@
 export const eventProperty = {
   properties: {
     $lib: "QuickApp",
-    $lib_version: "3.2.4",
+    $lib_version: "3.3.2",
   },
   getOtherAfterNative: async function () {
     const first_visit_day = await storage.get({
@@ -30,11 +30,10 @@ export const eventProperty = {
       network.getType({
         success: function (e) {
           t.$network_type = e.type;
-          resolve(e)
+          resolve(e);
         },
       });
-    })
-
+    });
   },
   getAppInfoSync: function () {
     if (wx.getAccountInfoSync) {
