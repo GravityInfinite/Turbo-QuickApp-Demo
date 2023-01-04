@@ -4,7 +4,7 @@
   "description": "turbo quickapp sdk",
   "main": "turbo.min.js",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js"
+    "build": "webpack --config ./webpack.config.js && cp ./dist/turbo.min.js ./quickapp-demo/src/helper/turbo.min.js"
   },
   "keywords": [
     "turbo",
